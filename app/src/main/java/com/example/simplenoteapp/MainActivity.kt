@@ -39,17 +39,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/*@Composable
-fun NoteDisplay() {
-    var textFieldState by remember {
-        mutableStateOf("")
-    }
-    TextField(
-        value = textFieldState,
-        onValueChange = { textFieldState = it }
-    )
-}*/
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Display() {
@@ -64,7 +53,6 @@ fun Display() {
                 navigationIcon = {
                     IconButton(
                         onClick = {
-
                         }
                     ) {
                         Icon(Icons.Filled.Menu, contentDescription = "Localized description")
@@ -74,11 +62,23 @@ fun Display() {
         },
 
         floatingActionButton = {
+            var rotation by remember {
+                mutableStateOf(0f)
+            }
+            val rotated by animateFloatAsState(
+                targetValue = rotation,
+                tween(
+                    durationMillis = 3000
+                )
+            )
             FloatingActionButton(
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                modifier = Modifier
+                    .graphicsLayer(rotationZ = rotated)
+                    .size(100.dp),
                 onClick = {
-
+                    rotation += 360f
                 }
             ) {
                 Icon(Icons.Filled.Add, "")
@@ -88,38 +88,44 @@ fun Display() {
         content = {
             LazyColumn {
                 items(50) { i ->
-                    var rotation by remember {
-                        mutableStateOf(0f)
-                    }
-                    val rotated by animateFloatAsState(
-                        targetValue = rotation,
-                        tween(
-                            durationMillis = 3000
-                        )
-                    )
-                    Surface(
-                        onClick = {
-                            rotation += 360f
-                        },
-                        shape = RoundedCornerShape(30.dp),
-                        border = BorderStroke(3.dp, MaterialTheme.colorScheme.primary),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shadowElevation = 15.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 25.dp, vertical = 5.dp)
-                            .graphicsLayer(rotationY = rotated, cameraDistance = 15f)
-                    ) {
-                        Text(
-                            text = "Sample item ${i + 1}",
-                            textAlign = TextAlign.Center,
-                            fontSize = 17.sp,
-                            modifier = Modifier
-                                .padding(12.dp)
-                        )
-                    }
+                    ListItem("Sample item ${i + 1}")
                 }
             }
         }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ListItem(text:String) {
+    var rotation by remember {
+        mutableStateOf(0f)
+    }
+    val rotated by animateFloatAsState(
+        targetValue = rotation,
+        tween(
+            durationMillis = 3000
+        )
+    )
+    Surface(
+        onClick = {
+            rotation += 360f
+        },
+        shape = RoundedCornerShape(30.dp),
+        border = BorderStroke(3.dp, MaterialTheme.colorScheme.primary),
+        color = MaterialTheme.colorScheme.primaryContainer,
+        shadowElevation = 15.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp, vertical = 5.dp)
+            .graphicsLayer(rotationY = rotated, cameraDistance = 15f)
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            fontSize = 17.sp,
+            modifier = Modifier
+                .padding(12.dp)
+        )
+    }
 }
